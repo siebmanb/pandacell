@@ -182,7 +182,7 @@ function updateResult() {
 	// building the list of occurences
 	// TODO: move html out of javascript into templating variables
 	for (var i = MIN_LENGTH ; i < MAX_LENGTH ; i++) {
-		str += i + " cellules " + (cells[i] == undefined || cells[i] == 0 ? '<span class="label label-info">0 times</span>' : '<span class="label label-success">' + cells[i] + ' times</span>') + "<br>";
+		str += i + " cells " + (cells[i] == undefined || cells[i] == 0 ? '<span class="label label-info">0 times</span>' : '<span class="label label-success">' + cells[i] + ' times</span>') + "<br>";
 	}
 
 	$('#results .panel-body').html(str);
