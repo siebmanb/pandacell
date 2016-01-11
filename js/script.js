@@ -9,7 +9,6 @@ var MAX_LENGTH = 60;
 var cells = [];
 var points = [];
 var saved = true;
-var lastCell = null;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
@@ -44,7 +43,7 @@ $( document ).ready(function() {
 
 	// click on cancel button
 	$('#cancel').on('click', function() {
-		cancelLine();
+		cancelChain();
 	});
 
 	// click on next image button in modal
@@ -107,8 +106,13 @@ function redrawCanvas() {
 	
 	// looping through the points
 	// four by four (a line is 2 points hence 4 coordinates)
-	for (var i = 0 ; i < points.length ; i = i + 4) {
-		drawLine(points[i],points[i+1],points[i+2],points[i+3],false);
+	for (var i = 0 ; i < points.length ; i++) {
+		// if we don't hit a marker, we draw the line
+		// if we did, i will be incremented, we do nothing more
+		if (points[i] != -1) {
+			drawLine(points[i],points[i+1],points[i+2],points[i+3],false);
+			i = i + 3;
+		}
 	}
 }
 
@@ -120,17 +124,32 @@ function clearCanvas() {
 }
 
 /**
- * Cancel a line on the image
+ * Cancel a chain on the image
  */
-function cancelLine() {
-	// removing as many points as the line length + 1
-	for (var i = 0 ; i < lastCell + 1 ; i++) {
+function cancelChain() {
+	var bool = true;
+	
+	// removing potential chain marker to initiate batch remove
+	if (points[points.length - 1] == -1) points.pop(); 
+	while (bool) { 
+		// if we hit a marker or array is empty, we stop
+		if (points[points.length - 1] == -1 || points.length == 0) {
+			break;
+		};
+		
+		// poping out a point (2 coordinates)
 		points.pop();
 		points.pop();
 	}
+	
 	redrawCanvas();
-	decrementCount(lastCell);
+	recomputeCount();
 	updateResult();
+	
+	// re-init
+	x1 = null;
+	y1 = null;
+	count = 0;
 }
 
 /********************************************************************************
@@ -154,8 +173,6 @@ function incrementCount(count) {
 	} else {
 		cells[count] = cells[count] + 1;
 	}
-	lastCell = count;
-	$('#cancel').removeClass('disabled');
 }
 
 /**
@@ -163,11 +180,27 @@ function incrementCount(count) {
  */
 function decrementCount(count) {
 	cells[count] = cells[count] - 1;
-	
-	// we can't remove another line, hence disabling
-	// the cancel button
-	// TODO: allow multiple deletion
-	$('#cancel').addClass('disabled');
+}
+
+/**
+ * Recomputes the count after canceling a point
+ * TODO: improve to avoid complete recomputation
+ */
+function recomputeCount() {
+	cells = [];
+	var count = 0;
+	for (var i = 0 ; i < points.length ; i++) {
+		// end of chain
+		if (points[i] == -1) {
+			// how many times do we have 4 coordinates (2 points)
+			// this is how many lines we have, then we have one more points
+			// than we have lines
+			incrementCount(count/4  + 1);
+			count = 0;
+			continue;
+		}
+		count++;
+	}
 }
 
 /********************************************************************************
@@ -201,6 +234,7 @@ function keyPressed(e) {
 		incrementCount(count);
 		updateResult();
 		count = 0;
+		points.push(-1); // storing special value to specify line end
 	}
 }
 
@@ -221,7 +255,6 @@ function resetValues() {
 	count = 0;
 	cells = [];
 	points = [];
-	lastCell = null;
 	saved = true;
 	$('#results,#submit,#submit').hide();
 	$('h4').html('');

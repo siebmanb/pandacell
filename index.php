@@ -37,7 +37,7 @@
 		<div class="panel-body"></div>
 	</div>
 	<div class="btn btn-primary" id="submit">Submit</div>
-	<div class="btn btn-default" id="cancel">Cancel</div>
+	<div class="btn btn-default" id="cancel">Cancel last chain</div>
 	<input type="hidden" id="filename">
 
 	<!-- Modal -->
