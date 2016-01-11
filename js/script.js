@@ -17,7 +17,7 @@ var ctx = c.getContext("2d");
  */
 $( document ).ready(function() {
 	// click on a filename
-	$('#cells li').on('click', function() {
+	$('#cells li[data-folder]').on('click', function() {
 		openImage($(this));
 	});
 
