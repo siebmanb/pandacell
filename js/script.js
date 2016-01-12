@@ -9,6 +9,7 @@ var MAX_LENGTH = 60;
 var cells = [];
 var points = [];
 var saved = true;
+var currentColor = 0;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
@@ -83,7 +84,7 @@ function drawLine(x1,y1,x2,y2,push) {
 	ctx.moveTo(x1,y1);
 	ctx.lineTo(x2,y2);
 	ctx.lineWidth = 5;
-	ctx.strokeStyle = 'red';
+	ctx.strokeStyle = getRedShades();
 	ctx.stroke();
 	
 	// saving the points
@@ -96,6 +97,15 @@ function drawLine(x1,y1,x2,y2,push) {
 		points.push(x2);
 		points.push(y2);
 	}
+}
+
+/**
+ * Returns a new shade of red
+ */
+function getRedShades() {
+	var colors = ['chocolate','coral','crimson','darkorange','darksalmon','firebrick','hotpink','indianred','marron','mediumvioletred','orangered','red'];
+	currentColor++;
+	return colors[currentColor % colors.length];
 }
 
 /**
@@ -125,6 +135,7 @@ function clearCanvas() {
 
 /**
  * Cancel a chain on the image
+ * TODO: improve to avoid change in red shades
  */
 function cancelChain() {
 	var bool = true;
