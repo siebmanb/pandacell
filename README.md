@@ -20,3 +20,5 @@ MIT Licence, see http://choosealicense.com/licenses/ for details.
 ### Contributions
 All contributions are very welcome! Create a pull-request to submit one.
 
+### Bonus
+The project contains a small batch script to convert TIFF images into JPG with ImageMagick.

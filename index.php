@@ -19,7 +19,7 @@
 		<h4></h4>
 		
 		<ul class="dropdown-menu" id="cells">
-		    <?php echo generateListFiles(); ?>
+		    <?php echo generateListFiles('cells','cells'); ?>
 		  </ul>
 	</div>
 
@@ -39,6 +39,7 @@
 	<div class="btn btn-primary" id="submit">Submit</div>
 	<div class="btn btn-default" id="cancel">Cancel last chain</div>
 	<input type="hidden" id="filename">
+	<input type="hidden" id="dir">
 
 	<!-- Modal -->
 	<div class="modal fade" tabindex="-1" role="dialog" id="modalConfirm">

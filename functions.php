@@ -1,35 +1,47 @@
 <?php
-function createCSV($contentP, $fileP) {
+// creates the CSV file
+function createCSV($contentP, $fileP, $dirP) {
+	/* Creates if needed the folders */
+	mkdir ( 'csv/' . $dirP, 0777, true );
+	
 	/* Creates a CSV file based on the content and name given */
-	$filename = 'csv/' . $fileP . '.csv';
+	$filename = 'csv/' . $dirP . $fileP . '.csv';
 	$file = fopen ( $filename, "w" );
 	file_put_contents ( $filename, $contentP );
 	http_response_code ( 200 );
 }
 
-function generateListFiles() {
-	$dir = 'cells';
-	$str = '';
-	$dh = opendir ( $dir );
-	// looping on the folders
-	while ( false !== ($subdir = readdir ( $dh )) ) {
-		if ($subdir != '.' && $subdir != '..' && $subdir != '.DS_Store' && $subdir != 'results') {
-			$str .= "<li class='dropdown-header'>" . $subdir . "</li>";
-			$subdirh = opendir ( 'cells/' . $subdir );
+// treats a file from the loop in the picture folder
+function treatFile($path) {
+	$filename = basename ( $path );
+	$dir = substr ( $path, 0, strlen ( $path ) - strlen ( $filename ) );
 	
-			// looping on files in subfolders
-			while ( false !== ($filename = readdir ( $subdirh )) ) {
-				if ($filename != '.' && $filename != '..' && $filename != '.DS_Store') {
-					// if CSV file exists, we mark it has done
-					if (file_exists ( 'csv/' . $filename . '.csv' )) {
-						$str .= "<li class='alert-success' data-folder='" . $subdir . "' data-file='" . $filename . "'><a><span class='glyphicon glyphicon-check'></span>&nbsp;" . $filename . "</a></li>";
-					} else {
-						$str .= "<li data-folder='" . $subdir . "' data-file='" . $filename . "'><a>" . $filename . "</a></li>";
-					}
-				}
-			}
+	if ($filename != '.' && $filename != '..' && $filename != '.DS_Store') {
+		// if CSV file exists, we mark it has done
+		if (file_exists ( 'csv/' . $dir . $filename . '.csv' )) {
+			return "<li class='alert-success' data-folder='" . $dir . "' data-file='" . $filename . "'><a><span class='glyphicon glyphicon-check'></span>&nbsp;<small>" . $dir . "</small>" . $filename . "</a></li>";
+		} else {
+			return "<li data-folder='" . $dir . "' data-file='" . $filename . "'><a><small>" . $dir . "</small>" . $filename . "</a></li>";
 		}
 	}
-	return $str;
 }
-?>
+
+// loops into the pictures folder
+// Source: http://stackoverflow.com/questions/24783862/list-all-the-files-and-folders-in-a-directory-with-php-recursive-function
+function generateListFiles($dir, $basedir) {
+	$str = '';
+	$files = scandir ( $dir );
+	
+	foreach ( $files as $key => $value ) {
+		if ($value == '.' || $value == '..' || $value == '.DS_Store')
+			continue;
+		$path = realpath ( $dir . DIRECTORY_SEPARATOR . $value );
+		if (! is_dir ( $path )) {
+			$str .= treatFile ( substr ( $path, strlen ( realpath ( "" ) . '/' . $basedir . '/' ) ) );
+		} else if ($value != "." && $value != "..") {
+			generateListFiles ( $path, $basedir );
+		}
+	}
+	
+	echo $str;
+}

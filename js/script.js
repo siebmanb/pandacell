@@ -296,9 +296,10 @@ function openImage(li) {
 	});
 
 	// saving the filename, displaying it and displaying the image
-	var folderAndFile = li.attr('data-folder') + '/' + li.attr('data-file');
+	var folderAndFile = li.attr('data-folder') + li.attr('data-file');
 	$('#preview img').attr('src',"cells/" + folderAndFile);
 	$('#filename').val(li.attr('data-file'));
+	$('#dir').val(li.attr('data-folder'));
 	$('h4').html(folderAndFile);
 }
 
@@ -334,7 +335,8 @@ function generateCSV() {
 		url: "create-csv.php",
 		data: {
 			content: getCSVContent(),
-			file: $('#filename').val()
+			file: $('#filename').val(),
+			dir: $('#dir').val()
 		},
 		success: function() {
 			// TODO: move html out of javascript into templating variables
