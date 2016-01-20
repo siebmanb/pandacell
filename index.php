@@ -11,9 +11,7 @@
 </head>
 <body>
 	<div class="dropdown" id="list">
-		<button class="btn btn-primary dropdown-toggle" type="button"
-			id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
-			aria-expanded="true">
+		<button class="btn btn-primary dropdown-toggle" id="openDropDown" data-toggle="dropdown">
 			Files <span class="caret"></span>
 		</button>
 		<h4></h4>
@@ -39,6 +37,7 @@
 	<div class="btn btn-primary" id="submit">Submit</div>
 	<div class="btn btn-default" id="cancel">Cancel last chain</div>
 	<input type="hidden" id="filename">
+	<input type="hidden" id="scrollTop">
 	<input type="hidden" id="dir">
 
 	<!-- Modal -->
@@ -54,8 +53,7 @@
 				</div>
 				<div class="modal-body text-center"></div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary" id="nextImage">Next picture</button>
+					<button class="btn btn-primary" id="nextImage">Next picture</button>
 				</div>
 			</div>
 		</div>

@@ -48,8 +48,8 @@ $( document ).ready(function() {
 	});
 
 	// click on next image button in modal
-	$('#nextImage').on('click', function() {
-		location.reload();
+	$('#nextImage').on('click', function(e) {
+		prepareForNextImage(e);
 	});
 });
 
@@ -86,7 +86,7 @@ function drawLine(x1,y1,x2,y2,push) {
 	ctx.lineWidth = 5;
 	ctx.strokeStyle = getRedShades();
 	ctx.stroke();
-	
+
 	// saving the points
 	// we actually store coordinates
 	// one after another
@@ -113,7 +113,7 @@ function getRedShades() {
  */
 function redrawCanvas() {
 	clearCanvas();
-	
+
 	// looping through the points
 	// four by four (a line is 2 points hence 4 coordinates)
 	for (var i = 0 ; i < points.length ; i++) {
@@ -139,7 +139,7 @@ function clearCanvas() {
  */
 function cancelChain() {
 	var bool = true;
-	
+
 	// removing potential chain marker to initiate batch remove
 	if (points[points.length - 1] == -1) points.pop(); 
 	while (bool) { 
@@ -147,16 +147,16 @@ function cancelChain() {
 		if (points[points.length - 1] == -1 || points.length == 0) {
 			break;
 		};
-		
+
 		// poping out a point (2 coordinates)
 		points.pop();
 		points.pop();
 	}
-	
+
 	redrawCanvas();
 	recomputeCount();
 	updateResult();
-	
+
 	// re-init
 	x1 = null;
 	y1 = null;
@@ -222,7 +222,7 @@ function recomputeCount() {
  */
 function updateResult() {
 	var str = "";
-	
+
 	// building the list of occurences
 	// TODO: move html out of javascript into templating variables
 	for (var i = MIN_LENGTH ; i < MAX_LENGTH ; i++) {
@@ -267,7 +267,7 @@ function resetValues() {
 	cells = [];
 	points = [];
 	saved = true;
-	$('#results,#submit,#submit').hide();
+	$('#results,#submit,#cancel').hide();
 	$('h4').html('');
 }
 
@@ -309,6 +309,29 @@ function openImage(li) {
 function closeImage() {
 	$('#preview img').attr('src','');
 	clearCanvas();
+}
+
+/**
+ * Prepare the interface for the next image
+ */
+function prepareForNextImage(e) {
+	// resetting the view
+	closeImage();
+	resetValues();
+
+	// hide the modal
+	$('#modalConfirm').modal('hide');
+
+	// updating the status of the current image in the menu
+	var dir = $('#dir').val();
+	var filename = $('#filename').val();
+	var selector = '#cells li[data-folder="' + dir + '"][data-file="' + filename + '"]';
+	$(selector).html("<a><span class='glyphicon glyphicon-check'></span>&nbsp;<small>" + dir + "</small>" + filename + "</a>");
+	$(selector).addClass('alert-success');
+	
+	// opening the menu
+	e.stopPropagation();
+	$('#cells').dropdown('toggle');
 }
 
 /********************************************************************************
